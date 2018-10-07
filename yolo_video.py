@@ -2,6 +2,8 @@ import sys
 import argparse
 from yolo import YOLO, detect_video
 from PIL import Image
+from glob import glob
+from os import path
 
 def detect_img(yolo):
     while True:
@@ -14,7 +16,23 @@ def detect_img(yolo):
         else:
             r_image = yolo.detect_image(image)
             r_image.show()
+        yolo.close_session()
+
+
+def detect_img_folder(yolo, input_dir, output_dir, show = False):
+    for img in glob(input_dir + "/*.jpg"):
+        try:
+            image = Image.open(img)
+        except:
+            print('Open Error! Try again!')
+            continue
+        else:
+            r_image = yolo.detect_image(image)
+            r_image.save(path.join(output_dir, path.basename(img)))
+            if show:
+                r_image.show()
     yolo.close_session()
+
 
 FLAGS = None
 
@@ -48,6 +66,11 @@ if __name__ == '__main__':
         '--image', default=False, action="store_true",
         help='Image detection mode, will ignore all positional arguments'
     )
+
+    parser.add_argument(
+        '--image_folder', default=False,
+        help='Image folder detection mode, will ignore all positional arguments'
+    )
     '''
     Command line positional arguments -- for video detection mode
     '''
@@ -71,7 +94,15 @@ if __name__ == '__main__':
         if "input" in FLAGS:
             print(" Ignoring remaining command line arguments: " + FLAGS.input + "," + FLAGS.output)
         detect_img(YOLO(**vars(FLAGS)))
+    elif FLAGS.image_folder:
+        # dir = input('Input image folder:')
+        # out_dir = input('Out image folder:')
+        detect_img_folder(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
+
     elif "input" in FLAGS:
         detect_video(YOLO(**vars(FLAGS)), FLAGS.input, FLAGS.output)
     else:
         print("Must specify at least video_input_path.  See usage with --help.")
+
+
+

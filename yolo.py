@@ -17,13 +17,14 @@ from yolo3.model import yolo_eval, yolo_body, tiny_yolo_body
 from yolo3.utils import letterbox_image
 import os
 from keras.utils import multi_gpu_model
+import random
 
 class YOLO(object):
     _defaults = {
-        "model_path": 'model_data/yolo.h5',
-        "anchors_path": 'model_data/yolo_anchors.txt',
-        "classes_path": 'model_data/coco_classes.txt',
-        "score" : 0.3,
+        "model_path": 'model_data/obj_cls_tiny.h5',
+        "anchors_path": 'model_data/tiny_yolo_anchors.txt',
+        "classes_path": 'model_data/obj_cls.txt',
+        "score" : 0.001,
         "iou" : 0.45,
         "model_image_size" : (416, 416),
         "gpu_num" : 1,
@@ -152,14 +153,17 @@ class YOLO(object):
                 text_origin = np.array([left, top + 1])
 
             # My kingdom for a good redistributable image drawing library.
+            r = lambda: random.randint(0, 255)
+            print('#%02X%02X%02X' % (r(), r(), r()))
+            clr = (r(), r(), r())
             for i in range(thickness):
                 draw.rectangle(
                     [left + i, top + i, right - i, bottom - i],
-                    outline=self.colors[c])
-            draw.rectangle(
-                [tuple(text_origin), tuple(text_origin + label_size)],
-                fill=self.colors[c])
-            draw.text(text_origin, label, fill=(0, 0, 0), font=font)
+                    outline=clr)
+            # draw.rectangle(
+            #     [tuple(text_origin), tuple(text_origin + label_size)],
+            #     fill=clr)
+            # draw.text(text_origin, label, fill=(0, 0, 0), font=font)
             del draw
 
         end = timer()
