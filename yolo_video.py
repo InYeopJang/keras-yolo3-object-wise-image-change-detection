@@ -33,6 +33,25 @@ def detect_img_folder(yolo, input_dir, output_dir, show = False):
                 r_image.show()
     yolo.close_session()
 
+# def detect_img_folder(yolo, dir_dir, output_dir, show = False):
+#     for input_dir in os.listdir(dir_dir):
+#         input_dir = path.join(dir_dir, input_dir)
+#         print(input_dir)
+#         if path.isfile(input_dir):
+#             for img in glob(input_dir.split(".")[0] + "/*.jpg"):
+#                 try:
+#                     image = Image.open(img)
+#                 except:
+#                     print(img)
+#                     print('Open Error! Try again!')
+#                     continue
+#                 else:
+#                     r_image = yolo.detect_image(image)
+#                     r_image.save(path.join(output_dir, path.basename(img)))
+#                     if show:
+#                         r_image.show()
+#     yolo.close_session()
+#
 
 FLAGS = None
 
